@@ -12,18 +12,28 @@ import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { calculateFee, GasPrice, isDeliverTxFailure } from '@cosmjs/stargate'
 
 type Data = {
-  name: string
+  status: string
 }
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-  const { account, client, gasPrice } = await newWallet()
-  const toSend = faucetCoin()
+  try {
+    const { account, client, gasPrice } = await newWallet()
+    const toSend = faucetCoin()
+    if (typeof req.query.dest !== 'string') {
+      throw new Error('Invalid query')
+    }
+    const { dest } = req.query
 
-  const response = await client.sendTokens(account.address, "sei1g2lpwqqt7w6tmeql5e9jq6hy3kqmtudl7x2aee", [toSend], calculateFee(4000000, gasPrice))
-  res.status(200).json({name: response.toString()})
+    const response = await client.sendTokens(account.address, dest, [toSend], calculateFee(200000, gasPrice))
+    res.status(200).json({status: "success"})
+  } catch (e: any) {
+    console.error(e)
+    res.status(500).json({status: "error"})
+  }
+
 }
 
 export interface Wallet {
