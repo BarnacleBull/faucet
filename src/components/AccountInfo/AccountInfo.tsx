@@ -43,7 +43,6 @@ const AccountInfo = () => {
 				<div className={styles.tokenRow} key={balance.denom}>
 					<div className={styles.tokenAmount}>{balance.amount}</div>
 					<div className={styles.tokenDenom}>{balance.denom}</div>
-					<IoSendSharp className={styles.icon} onClick={() => {}} />
 				</div>
 			);
 		});
@@ -56,13 +55,13 @@ const AccountInfo = () => {
 
 	return (
 		<div className={styles.card}>
-			<h3 className='sectionHeader'>Account info</h3>
-			<div className='cardContent'>
-				<div className='addressWrapper'>
-					<p className='accountAddress'>{walletAccount?.address || 'No account found!'}</p>
-					<IoCopySharp className='copy' onClick={onClickCopy} />
+			<h3 className={styles.sectionHeader}>Account info</h3>
+			<div className={styles.cardContent}>
+				<div className={styles.addressWrapper}>
+					<p className={styles.accountAddress}>{walletAccount?.address || 'No account found!'}</p>
+          {walletAccount?.address && <IoCopySharp className={styles.copy} onClick={onClickCopy} />}
 				</div>
-				<div className='tokens'>{renderBalances()}</div>
+				<div className={styles.tokens}>{renderBalances()}</div>
 			</div>
 		</div>
 	);
