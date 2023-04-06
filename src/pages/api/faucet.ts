@@ -44,15 +44,15 @@ export interface Wallet {
 }
 
 function faucetCoin(): Coin {
-  if (!process.env.DENOM) {
-    throw new Error('Set the DENOM env variable to the token to use')
+  if (!process.env.NEXT_PUBLIC_DENOM) {
+    throw new Error('Set the NEXT_PUBLIC_DENOM env variable to the token to use')
   }
 
   if (!process.env.AMOUNT) {
     throw new Error('Set the AMOUNT env variable to the amount to use')
   }
 
-  return coin(process.env.AMOUNT, process.env.DENOM)
+  return coin(process.env.AMOUNT, process.env.NEXT_PUBLIC_DENOM)
 }
 async function newWallet(): Promise<Wallet> {
   if (!process.env.MNEMONIC) {

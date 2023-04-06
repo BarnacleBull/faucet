@@ -3,7 +3,8 @@ import { RecoilRoot } from 'recoil'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import type { AppProps } from 'next/app'
 import { CssBaseline, ThemeProvider, createTheme, useMediaQuery } from '@mui/material'
-
+import 'react-toastify/dist/ReactToastify.css';
+import {ToastContainer} from 'react-toastify'
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient()
@@ -24,6 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
           <QueryClientProvider client={queryClient}>
             <CssBaseline />
+            <ToastContainer theme={ prefersDarkMode ? 'dark' : 'light' } />
             <Component {...pageProps} />
           </QueryClientProvider>
         </ThemeProvider>

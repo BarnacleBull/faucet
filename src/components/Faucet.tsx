@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil'
 
 import { selectedChainConfigSelector } from '@sparrowswap/recoil'
 import { AccountInfo, ChainInfo, RequestButton } from '@sparrowswap/components'
-import {Container, Stack} from '@mui/material'
+import {Box, Container, Stack} from '@mui/material'
 
 const Faucet = () => {
   const selectedChainConfigUrls = useRecoilValue(selectedChainConfigSelector)
@@ -13,11 +13,11 @@ const Faucet = () => {
   return (
     <SeiWalletProvider chainConfiguration={selectedChainConfigUrls}>
       <Container maxWidth='sm'>
-        <div className='appHeader'>
+        <div>
           <h1>USDC Faucet</h1>
-          <p>Receive 100 testnet USDC</p>
+          <p>Receive 100 USDC on Sei&rsquo;s <Box component='span' sx={{ fontFamily: 'Monospace' }}>atlantic-2</Box> testnet.</p>
         </div>
-        <div className='appContent'>
+        <div>
           <Stack spacing={2}>
             <ChainInfo />
             <RequestButton />
