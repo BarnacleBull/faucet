@@ -1,12 +1,11 @@
 export const createBalanceFormatter = ({
-                                         maximumFractionDigits = 6,
                                          ...options
                                        }: Omit< Parameters<typeof Intl.NumberFormat>[1],
   'style' | 'currency'
 > = {}) => {
   const formatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
-    maximumFractionDigits,
+    maximumFractionDigits: 6,
     ...options,
     style: 'currency',
     currency: 'USD'

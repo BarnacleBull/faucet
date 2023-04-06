@@ -20,7 +20,7 @@ const AccountInfo = () => {
 
 	useEffect(() => {
 		refetchBalances()
-	}, [offlineSigner]);
+	}, [offlineSigner, refetchBalances]);
 
   const { data: walletBalances, isLoading: isLoadingBalances } = useQuery(
     `balances`,
