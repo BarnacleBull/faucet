@@ -7,6 +7,7 @@ import { useWallet } from '@sei-js/react';
 
 import { selectedChainConfigAtom, customChainIdAtom, customRestUrlAtom, customRpcUrlAtom } from '../../recoil';
 import styles from './styles.module.css'
+import {Button, CircularProgress, Stack} from "@mui/material";
 
 const ChainInfo = () => {
 	const wallet = useWallet();
@@ -56,17 +57,22 @@ const ChainInfo = () => {
 		};
 
 		return (
-			<div className={styles.walletButton} onClick={onClickWallet} key={walletKey}>
-				{isWalletConnected && <IoCheckmarkCircleSharp className='connectedIcon' />}
-				{getButtonText()}
-			</div>
+      <Button
+        color='secondary'
+        variant='outlined'
+        startIcon = {isWalletConnected ? <IoCheckmarkCircleSharp className='connectedIcon' /> : null}
+        onClick={onClickWallet}
+        key={walletKey}
+      >
+        {getButtonText()}
+      </Button>
 		);
 	};
 
 	return (
-		<div className='card'>
-			<div className='connect'>{supportedWallets.map(renderSupportedWallet)}</div>
-		</div>
+			<Stack spacing={2}>
+        {supportedWallets.map(renderSupportedWallet)}
+      </Stack>
 	);
 };
 

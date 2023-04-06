@@ -5,6 +5,7 @@ import { useQueryClient, useWallet } from '@sei-js/react';
 
 import { BalanceResponseType } from '../../types';
 import styles from './styles.module.css'
+import {Card, CardContent, Divider, Stack} from '@mui/material'
 
 const AccountInfo = () => {
 	const { offlineSigner, accounts } = useWallet();
@@ -40,10 +41,10 @@ const AccountInfo = () => {
 
 		return walletBalances?.map((balance) => {
 			return (
-				<div className={styles.tokenRow} key={balance.denom}>
+				<Stack key={balance.denom} spacing={0.5}>
 					<div className={styles.tokenAmount}>{balance.amount}</div>
 					<div className={styles.tokenDenom}>{balance.denom}</div>
-				</div>
+				</Stack>
 			);
 		});
 	};
@@ -54,16 +55,21 @@ const AccountInfo = () => {
 	};
 
 	return (
-		<div className={styles.card}>
-			<h3 className={styles.sectionHeader}>Account info</h3>
-			<div className={styles.cardContent}>
-				<div className={styles.addressWrapper}>
-					<p className={styles.accountAddress}>{walletAccount?.address || 'No account found!'}</p>
+		<Card>
+      <CardContent>
+
+
+      <h3>Account Info</h3>
+				<Stack direction='row' alignItems='center'>
+					{walletAccount?.address || 'No account found!'}
           {walletAccount?.address && <IoCopySharp className={styles.copy} onClick={onClickCopy} />}
-				</div>
-				<div className={styles.tokens}>{renderBalances()}</div>
-			</div>
-		</div>
+				</Stack>
+        <h3>Balances</h3>
+				<Stack divider={<Divider flexItem />} spacing={2}>
+          {renderBalances()}
+        </Stack>
+      </CardContent>
+		</Card>
 	);
 };
 
