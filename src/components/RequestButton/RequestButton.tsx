@@ -25,6 +25,9 @@ const RequestButton = () => {
 	return (
 		<Button
       disabled={isLoading || !walletAccount}
+      color='primary'
+      variant='contained'
+      size='large'
       startIcon = {
         isLoading ? <CircularProgress color="inherit" size={25} /> : null
       }
