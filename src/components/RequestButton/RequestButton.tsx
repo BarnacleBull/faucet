@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useWallet } from '@sei-js/react'
 import ReCAPTCHA from 'react-google-recaptcha'
@@ -10,7 +10,7 @@ import {
 import { useMutation } from 'react-query'
 import { AccountData } from '@cosmjs/proto-signing'
 import axios from 'axios'
-import {useRefetchQueries} from "@sparrowswap/hooks/useRefetchQueries";
+import { useRefetchQueries } from "@sparrowswap/hooks/useRefetchQueries";
 
 type RequestFaucetArgs = {
   account: AccountData
@@ -20,6 +20,7 @@ type RequestFaucetArgs = {
 const RequestButton = () => {
 	const { accounts } = useWallet();
 	const walletAccount = useMemo(() => accounts?.[0], [accounts]);
+  const recaptchaRef = useRef<ReCAPTCHA>(null)
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const refetchBalances = useRefetchQueries(['balances'], 1500)
 
@@ -35,11 +36,15 @@ const RequestButton = () => {
       onSuccess: () => {
         console.log('success')
         toast.success('Faucet request successful!')
-        refetchBalances()
       },
       onError: (error) => {
         console.log(error)
         toast.error((error as any)?.message ?? error?.toString())
+      },
+      onSettled: () => {
+        recaptchaRef.current?.reset()
+        setRecaptchaToken(null)
+        refetchBalances()
       }
     }
   )
@@ -54,6 +59,7 @@ const RequestButton = () => {
         sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
         size='normal'
         onChange={setRecaptchaToken}
+        ref={recaptchaRef}
       />
       <Button
         disabled={isLoading || !walletAccount || !recaptchaToken}
