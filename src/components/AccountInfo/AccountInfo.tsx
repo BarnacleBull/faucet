@@ -35,7 +35,8 @@ const AccountInfo = () => {
     enabled: Boolean(
       walletAccount
     ),
-
+      cacheTime: 0,
+      keepPreviousData: false,
       refetchOnMount: 'always',
       refetchInterval: 15000,
       refetchIntervalInBackground: true,
