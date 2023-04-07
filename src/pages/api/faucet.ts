@@ -19,15 +19,49 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
+
+
   try {
+    if (!process.env.RECAPTCHA_SECRET_KEY) {
+      throw new Error('Set the RECAPTCHA_SECRET_KEY environment variable')
+    }
+
+    if (typeof req.query.dest !== 'string' || typeof req.query.token !== 'string') {
+      return res.status(422).json({
+        status: 'Cannot process request. Please provide the required fields'
+      });
+    }
+    const { dest, token } = req.query
+
+    // Ping the google recaptcha verify API to verify the captcha code you received
+    const catpchaResponse = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+        method: "POST",
+      }
+    );
+    const captchaValidation = await catpchaResponse.json();
+    /**
+     * The structure of response from the veirfy API is
+     * {
+     *  "success": true|false,
+     *  "challenge_ts": timestamp,  // timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZZ)
+     *  "hostname": string,         // the hostname of the site where the reCAPTCHA was solved
+     *  "error-codes": [...]        // optional
+        }
+     */
+    if (!captchaValidation.success) {
+      return res.status(422).json({
+        status: "Unproccesable request. Invalid captcha.",
+      });
+    }
+
     const { account, client, gasPrice } = await newWallet()
     const toSend = faucetCoin()
-    if (typeof req.query.dest !== 'string') {
-      throw new Error('Invalid query')
-    }
-    const { dest } = req.query
-
-    const response = await client.sendTokens(account.address, dest, [toSend], calculateFee(200000, gasPrice))
+    await client.sendTokens(account.address, dest, [toSend], calculateFee(200000, gasPrice))
     res.status(200).json({status: "success"})
   } catch (e: any) {
     console.error(e)

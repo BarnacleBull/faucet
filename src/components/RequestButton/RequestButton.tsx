@@ -1,53 +1,79 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useWallet } from '@sei-js/react'
-
+import ReCAPTCHA from 'react-google-recaptcha'
 import {
   Button,
-  CircularProgress
+  CircularProgress,
+  Stack
 } from '@mui/material'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation } from 'react-query'
 import { AccountData } from '@cosmjs/proto-signing'
 import axios from 'axios'
-import {useRefetchQueries} from "@sparrowswap/hooks/useRefetchQueries";
+import { useRefetchQueries } from "@sparrowswap/hooks/useRefetchQueries";
+
+type RequestFaucetArgs = {
+  account: AccountData
+  token: string
+}
 
 const RequestButton = () => {
 	const { accounts } = useWallet();
 	const walletAccount = useMemo(() => accounts?.[0], [accounts]);
-
+  const recaptchaRef = useRef<ReCAPTCHA>(null)
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
   const refetchBalances = useRefetchQueries(['balances'], 1500)
 
   const { mutate: requestFaucet, isLoading } = useMutation(
-    async (account: AccountData) => {
-      const { data: response } = await axios.get('/api/faucet', {params: {dest: account.address}})
+    async (args: RequestFaucetArgs) => {
+      const { data: response } = await axios.get('/api/faucet', {params: {
+          dest: args.account.address,
+          token: args.token
+      }})
       console.log(response.data)
     },
     {
       onSuccess: () => {
         console.log('success')
         toast.success('Faucet request successful!')
-        refetchBalances()
       },
       onError: (error) => {
         console.log(error)
         toast.error((error as any)?.message ?? error?.toString())
+      },
+      onSettled: () => {
+        recaptchaRef.current?.reset()
+        setRecaptchaToken(null)
+        refetchBalances()
       }
     }
   )
 
+  if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+    throw new Error('Missing NEXT_PUBLIC_RECAPTCHA_SITE_KEY env variable')
+  }
+
 	return (
-		<Button
-      disabled={isLoading || !walletAccount}
-      color='primary'
-      variant='contained'
-      size='large'
-      startIcon = {
-        isLoading ? <CircularProgress color="inherit" size={25} /> : null
-      }
-      onClick={() => requestFaucet(walletAccount)}
-    >
-      Request
-    </Button>
+    <Stack spacing={2}>
+      <ReCAPTCHA
+        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+        size='normal'
+        onChange={setRecaptchaToken}
+        ref={recaptchaRef}
+      />
+      <Button
+        disabled={isLoading || !walletAccount || !recaptchaToken}
+        color='primary'
+        variant='contained'
+        size='large'
+        startIcon = {
+          isLoading ? <CircularProgress color="inherit" size={25} /> : null
+        }
+        onClick={() => requestFaucet({account: walletAccount, token: recaptchaToken ?? ''})}
+      >
+        Request
+      </Button>
+    </Stack>
 	);
 };
 
