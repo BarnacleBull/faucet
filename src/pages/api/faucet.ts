@@ -112,7 +112,38 @@ async function newWallet(): Promise<Wallet> {
     throw new Error('Set the MNEMONIC5 env variable to the mnemonic of the wallet to use')
   }
 
-  const mnemonic = getRandomElement([process.env.MNEMONIC, process.env.MNEMONIC2, process.env.MNEMONIC3, process.env.MNEMONIC4, process.env.MNEMONIC5])
+  if (!process.env.MNEMONIC6) {
+    throw new Error('Set the MNEMONIC6 env variable to the mnemonic of the wallet to use')
+  }
+
+  if (!process.env.MNEMONIC7) {
+    throw new Error('Set the MNEMONIC7 env variable to the mnemonic of the wallet to use')
+  }
+
+  if (!process.env.MNEMONIC8) {
+    throw new Error('Set the MNEMONIC8 env variable to the mnemonic of the wallet to use')
+  }
+
+  if (!process.env.MNEMONIC9) {
+    throw new Error('Set the MNEMONIC9 env variable to the mnemonic of the wallet to use')
+  }
+
+  if (!process.env.MNEMONIC10) {
+    throw new Error('Set the MNEMONIC10 env variable to the mnemonic of the wallet to use')
+  }
+
+  const mnemonic = getRandomElement([
+    process.env.MNEMONIC,
+    process.env.MNEMONIC2,
+    process.env.MNEMONIC3,
+    process.env.MNEMONIC4,
+    process.env.MNEMONIC5,
+    process.env.MNEMONIC6,
+    process.env.MNEMONIC7,
+    process.env.MNEMONIC8,
+    process.env.MNEMONIC9,
+    process.env.MNEMONIC10
+  ])
 
   if (!process.env.GAS_PRICE) {
     throw new Error('Set the GAS_PRICE env variable to the gas price to use when creating client')
