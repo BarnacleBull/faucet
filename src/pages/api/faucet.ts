@@ -88,10 +88,31 @@ function faucetCoin(): Coin {
 
   return coin(process.env.AMOUNT, process.env.NEXT_PUBLIC_DENOM)
 }
+
+const getRandomElement = (arr: any[]) =>
+  arr.length ? arr[Math.floor(Math.random() * arr.length)] : undefined
 async function newWallet(): Promise<Wallet> {
   if (!process.env.MNEMONIC) {
     throw new Error('Set the MNEMONIC env variable to the mnemonic of the wallet to use')
   }
+
+  if (!process.env.MNEMONIC2) {
+    throw new Error('Set the MNEMONIC2 env variable to the mnemonic of the wallet to use')
+  }
+
+  if (!process.env.MNEMONIC3) {
+    throw new Error('Set the MNEMONIC3 env variable to the mnemonic of the wallet to use')
+  }
+
+  if (!process.env.MNEMONIC4) {
+    throw new Error('Set the MNEMONIC4 env variable to the mnemonic of the wallet to use')
+  }
+
+  if (!process.env.MNEMONIC5) {
+    throw new Error('Set the MNEMONIC5 env variable to the mnemonic of the wallet to use')
+  }
+
+  const mnemonic = getRandomElement([process.env.MNEMONIC, process.env.MNEMONIC2, process.env.MNEMONIC3, process.env.MNEMONIC4, process.env.MNEMONIC5])
 
   if (!process.env.GAS_PRICE) {
     throw new Error('Set the GAS_PRICE env variable to the gas price to use when creating client')
@@ -101,7 +122,7 @@ async function newWallet(): Promise<Wallet> {
     throw new Error('Set the RPC_URL env variable to the RPC URL of the node to use')
   }
 
-  const signer = await DirectSecp256k1HdWallet.fromMnemonic(process.env.MNEMONIC, {
+  const signer = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
     prefix: 'sei'
   })
 
