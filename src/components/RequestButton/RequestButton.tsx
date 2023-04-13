@@ -17,6 +17,9 @@ type RequestFaucetArgs = {
   token: string
 }
 
+const sleep = (delayMs: number) =>
+  new Promise((resolve) => setTimeout(resolve, delayMs))
+
 const RequestButton = () => {
 	const { accounts } = useWallet();
 	const walletAccount = useMemo(() => accounts?.[0], [accounts]);
@@ -26,6 +29,8 @@ const RequestButton = () => {
 
   const { mutate: requestFaucet, isLoading } = useMutation(
     async (args: RequestFaucetArgs) => {
+
+      await sleep(10000)
       const { data: response } = await axios.get('/api/faucet', {params: {
           dest: args.account.address,
           token: args.token
