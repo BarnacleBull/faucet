@@ -22,6 +22,10 @@ export default async function handler(
 
 
   try {
+    if (!Boolean(process.env.NEXT_PUBLIC_ENABLED)) {
+      throw new Error('Faucet is not available at the moment. Please try again later.')
+    }
+
     if (!process.env.RECAPTCHA_SECRET_KEY) {
       throw new Error('Set the RECAPTCHA_SECRET_KEY environment variable')
     }
