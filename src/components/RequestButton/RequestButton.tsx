@@ -33,8 +33,8 @@ const RequestButton = () => {
 
   const { mutate: requestFaucet, isLoading } = useMutation(
     async (args: RequestFaucetArgs) => {
-      if (!Boolean(process.env.NEXT_PUBLIC_ENABLED)) {
-        throw new Error('Faucet is not available at the moment. Please try again later.')
+      if (process.env.NEXT_PUBLIC_ENABLED !== 'true') {
+        throw new Error('Faucet is not available at the moment. Please swap for USDC on SparrowSwap. https://sparrowswap.xyz/')
       }
 
       await sleep(10000 + getRandomInt(30000))
