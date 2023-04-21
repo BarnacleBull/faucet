@@ -33,6 +33,9 @@ const RequestButton = () => {
 
   const { mutate: requestFaucet, isLoading } = useMutation(
     async (args: RequestFaucetArgs) => {
+      if (!Boolean(process.env.NEXT_PUBLIC_ENABLED)) {
+        throw new Error('Faucet is not available at the moment. Please try again later.')
+      }
 
       await sleep(10000 + getRandomInt(30000))
       const { data: response } = await axios.get('/api/faucet', {params: {
